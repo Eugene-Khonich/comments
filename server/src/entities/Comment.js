@@ -34,6 +34,7 @@ const Comment = new EntitySchema({
       target: 'Comment',
       type: 'many-to-one',
       nullable: true,
+      inverseSide: 'children',
     },
     children: {
       target: 'Comment',

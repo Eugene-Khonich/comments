@@ -31,12 +31,21 @@ class CommentsService {
     }
 
     const repo = AppDataSource.getRepository(Comment)
+
+    let parent = null
+    if (parentId) {
+      parent = await repo.findOne({ where: { id: Number(parentId) } })
+      if (!parent) {
+        throw createError(404, 'Parent comment not found')
+      }
+    }
+
     const newComment = repo.create({
       username,
       email,
       homepage,
       text: sanitizeComment(text),
-      parentId: parentId || null,
+      parent,
       attachment: file || null,
       createdAt: new Date(),
     })

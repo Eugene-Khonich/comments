@@ -1,4 +1,3 @@
-import Attachment from '../entities/Attachment.js'
 import Comment from '../entities/Comment.js'
 import { DataSource } from 'typeorm'
 
@@ -10,5 +9,5 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASS || 'password',
   database: process.env.DB_NAME || 'commentsdb',
   synchronize: true,
-  entities: [Comment, Attachment],
+  entities: [Comment],
 })

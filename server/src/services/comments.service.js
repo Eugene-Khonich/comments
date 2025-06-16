@@ -24,7 +24,7 @@ class CommentsService {
   }
 
   async createComment(data) {
-    const { username, email, homepage, text, captcha, parentId, file } = data
+    const { userName, email, homePage, text, captcha, parentId, file } = data
 
     if (!captcha) {
       throw createError(400, 'CAPTCHA required')
@@ -39,11 +39,10 @@ class CommentsService {
         throw createError(404, 'Parent comment not found')
       }
     }
-
     const newComment = repo.create({
-      username,
+      userName,
       email,
-      homepage,
+      homePage,
       text: sanitizeComment(text),
       parent,
       attachment: file || null,

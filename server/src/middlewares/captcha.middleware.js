@@ -1,7 +1,7 @@
 import createError from 'http-errors'
 import captchaService from '../services/captcha.service.js'
 
-export const validateCaptcha = (req, res, next) => {
+const validateCaptcha = (req, res, next) => {
   const { captchaId, captchaText } = req.body
 
   if (!captchaId || !captchaText) {
@@ -16,3 +16,5 @@ export const validateCaptcha = (req, res, next) => {
 
   next()
 }
+
+export default validateCaptcha

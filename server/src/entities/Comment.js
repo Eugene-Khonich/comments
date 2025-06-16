@@ -24,6 +24,10 @@ const Comment = new EntitySchema({
     text: {
       type: 'text',
     },
+    attachment: {
+      type: 'varchar',
+      nullable: true,
+    },
     createdAt: {
       type: 'timestamp',
       createDate: true,
@@ -40,12 +44,6 @@ const Comment = new EntitySchema({
       target: 'Comment',
       type: 'one-to-many',
       inverseSide: 'parent',
-    },
-    attachments: {
-      target: 'Attachment',
-      type: 'one-to-many',
-      inverseSide: 'comment',
-      cascade: true,
     },
   },
 })

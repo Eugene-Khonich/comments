@@ -1,4 +1,5 @@
 import commentsService from '../services/comments.service.js'
+import fileService from '../services/file.service.js'
 
 class CommentsController {
   async getComments(req, res) {
@@ -25,7 +26,15 @@ class CommentsController {
 
   async createComment(req, res) {
     const commentData = req.body
-    const newComment = await commentsService.createComment(commentData)
+    let fileInfo = null
+    if (req.file) {
+      fileInfo = await fileService.processUploadedFile(req.file)
+    }
+
+    const newComment = await commentsService.createComment({
+      ...commentData,
+      file: fileInfo?.filename || null,
+    })
     res.status(201).json(newComment)
   }
 

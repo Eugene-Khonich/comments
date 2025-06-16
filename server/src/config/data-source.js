@@ -1,10 +1,8 @@
-import User from '../entities/User.js'
-import Comment from '../entities/Comment.js'
 import Attachment from '../entities/Attachment.js'
+import Comment from '../entities/Comment.js'
+import { DataSource } from 'typeorm'
 
-const entities = [User, Comment, Attachment]
-
-export default {
+export const AppDataSource = new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT) || 5432,
@@ -12,6 +10,5 @@ export default {
   password: process.env.DB_PASS || 'password',
   database: process.env.DB_NAME || 'commentsdb',
   synchronize: true,
-  logging: false,
-  entities,
-}
+  entities: [Comment, Attachment],
+})

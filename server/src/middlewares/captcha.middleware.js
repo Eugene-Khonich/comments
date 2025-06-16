@@ -1,0 +1,18 @@
+import createError from 'http-errors'
+import captchaService from '../services/captcha.service.js'
+
+export const validateCaptcha = (req, res, next) => {
+  const { captchaId, captchaText } = req.body
+
+  if (!captchaId || !captchaText) {
+    return next(createError(400, 'Captcha ID and text are required'))
+  }
+
+  const isValid = captchaService.validateCaptcha(captchaId, captchaText)
+
+  if (!isValid) {
+    return next(createError(400, 'Invalid CAPTCHA'))
+  }
+
+  next()
+}

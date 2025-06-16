@@ -9,6 +9,18 @@ const Comment = new EntitySchema({
       type: 'int',
       generated: true,
     },
+    userName: {
+      type: 'varchar',
+      length: 100,
+    },
+    email: {
+      type: 'varchar',
+      length: 255,
+    },
+    homePage: {
+      type: 'varchar',
+      nullable: true,
+    },
     text: {
       type: 'text',
     },
@@ -18,12 +30,6 @@ const Comment = new EntitySchema({
     },
   },
   relations: {
-    user: {
-      target: 'User',
-      type: 'many-to-one',
-      eager: true,
-      cascade: true,
-    },
     parent: {
       target: 'Comment',
       type: 'many-to-one',

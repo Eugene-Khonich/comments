@@ -9,20 +9,28 @@ const Attachment = new EntitySchema({
       type: 'int',
       generated: true,
     },
-    filename: {
+    filePath: {
+      type: 'varchar',
+    },
+    fileType: {
       type: 'varchar',
     },
     mimeType: {
       type: 'varchar',
     },
-    url: {
-      type: 'varchar',
+    size: {
+      type: 'int',
+    },
+    createdAt: {
+      type: 'timestamp',
+      createDate: true,
     },
   },
   relations: {
     comment: {
       target: 'Comment',
       type: 'many-to-one',
+      joinColumn: true,
     },
   },
 })

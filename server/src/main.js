@@ -1,18 +1,16 @@
-import { DataSource } from 'typeorm'
-import envs from './config/envs.js'
-import ormConfig from './config/ormconfig.js'
+import { AppDataSource } from './config/data-source.js'
 import app from './app.js'
+import envs from './config/envs.js'
 
-const AppDataSource = new DataSource(ormConfig)
+const PORT = envs.PORT || 3001
 
 AppDataSource.initialize()
   .then(() => {
-    console.log('📦 DB connected')
-    const PORT = envs.PORT || 3001
+    console.log('📦 Database connected')
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`)
+      console.log(`🚀 Server is running on http://localhost:${PORT}`)
     })
   })
-  .catch((err) => {
-    console.error('❌ DB connection failed', err)
+  .catch((error) => {
+    console.error('❌ Failed to connect to the database:', error)
   })

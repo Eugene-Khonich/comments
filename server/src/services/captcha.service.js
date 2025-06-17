@@ -24,7 +24,7 @@ class CaptchaService {
     if (!expected) return false
 
     const isValid = expected === text.toLowerCase()
-    if (isValid) captchaStore.delete(id) // разове використання
+    if (isValid) captchaStore.delete(id)
     return isValid
   }
 }

@@ -2,6 +2,7 @@ import { AppDataSource } from '../config/data-source.js'
 import Comment from '../entities/Comment.js'
 import createError from 'http-errors'
 import sanitizeComment from '../utils/sanitizeComment.js'
+import { broadcast } from '../utils/websocket.js'
 
 class CommentsService {
   async getRootComments({ page, limit, sort, order }) {
@@ -60,6 +61,10 @@ class CommentsService {
     })
 
     await repo.save(newComment)
+    broadcast({
+      type: 'new_comment',
+      comment: newComment,
+    })
     return newComment
   }
 

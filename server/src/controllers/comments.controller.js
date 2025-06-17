@@ -10,8 +10,8 @@ class CommentsController {
       order = 'DESC',
     } = req.query
     const comments = await commentsService.getRootComments({
-      page,
-      limit,
+      page: Number(page),
+      limit: Number(limit),
       sort,
       order,
     })

@@ -6,13 +6,23 @@ import sanitizeComment from '../utils/sanitizeComment.js'
 class CommentsService {
   async getRootComments({ page, limit, sort, order }) {
     const repo = AppDataSource.getRepository(Comment)
+    const allowedSortFields = ['userName', 'email', 'createdAt']
+    const sortField = allowedSortFields.includes(sort) ? sort : 'createdAt'
+    const sortOrder = order?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'
     const [data, total] = await repo.findAndCount({
       where: { parentId: null },
-      order: { [sort]: order.toUpperCase() },
+      order: { [sortField]: sortOrder },
       skip: (page - 1) * limit,
       take: limit,
     })
-    return { data, total, page: Number(page), limit: Number(limit) }
+    return {
+      data,
+      total,
+      page: Number(page),
+      limit: Number(limit),
+      sort: sortField,
+      order: sortOrder,
+    }
   }
 
   async getReplies(parentId) {

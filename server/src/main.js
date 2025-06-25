@@ -12,7 +12,7 @@ initWebSocket(server)
 AppDataSource.initialize()
   .then(() => {
     console.log('📦 Database connected')
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`🚀 Server is running on http://localhost:${PORT}`)
     })
   })

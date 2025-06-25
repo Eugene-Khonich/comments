@@ -4,7 +4,7 @@ import styles from './CommentForm.module.css'
 import { fetchCaptcha, sendComment } from '../../api/comments'
 import validationSchema from '../../utils/validators'
 
-export default function CommentForm() {
+export default function CommentForm({ parentId = null, onSuccess }) {
   const [captchaImage, setCaptchaImage] = useState(null)
   const [captchaId, setCaptchaId] = useState(null)
 
@@ -24,13 +24,16 @@ export default function CommentForm() {
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
-      const payload = {
+      const formData = {
         ...values,
         captchaId,
+        captchaText: values.captcha,
+        parentId,
       }
-      await sendComment(payload)
+      const newComment = await sendComment(formData)
       resetForm()
       await loadCaptcha()
+      if (onSuccess) onSuccess(newComment)
     } catch (err) {
       console.error('Submit error:', err)
     }

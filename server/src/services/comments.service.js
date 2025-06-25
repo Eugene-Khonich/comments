@@ -38,15 +38,12 @@ class CommentsService {
 
   async createComment(data) {
     const { userName, email, homePage, text, captcha, parentId, file } = data
-
     if (!captcha) {
       throw createError(400, 'CAPTCHA required')
     }
     const errors = validateCommentInput({ userName, email, homePage, text })
     if (errors.length > 0) throw createError(400, errors.join(', '))
-
     const repo = AppDataSource.getRepository(Comment)
-
     let parent = null
     if (parentId) {
       parent = await repo.findOne({ where: { id: Number(parentId) } })
@@ -69,13 +66,30 @@ class CommentsService {
       attachment: file || null,
       createdAt: new Date(),
     })
-
     await repo.save(newComment)
     broadcast({
       type: 'new_comment',
       comment: newComment,
     })
     return newComment
+  }
+
+  async buildCommentTree(parentId = null) {
+    const repo = AppDataSource.getRepository(Comment)
+    const comments = await repo.find({
+      where: { parent: parentId ? { id: parentId } : null },
+      order: { createdAt: 'ASC' },
+    })
+    const tree = await Promise.all(
+      comments.map(async (comment) => {
+        const replies = await this.buildCommentTree(comment.id)
+        return {
+          ...comment,
+          replies,
+        }
+      })
+    )
+    return tree
   }
 
   async previewComment(text) {

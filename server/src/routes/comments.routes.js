@@ -8,6 +8,7 @@ const router = Router()
 const upload = multer({ dest: 'uploads/' })
 
 router.get('/', ctrlWrapper(commentsController.getComments))
+router.get('/tree', ctrlWrapper(commentsController.getAllCommentsTree))
 router.get('/replies/:parentId', ctrlWrapper(commentsController.getReplies))
 router.post(
   '/',

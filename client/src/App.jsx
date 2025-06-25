@@ -1,9 +1,9 @@
-import './App.css'
+import CommentForm from './components/CommentForm/CommentForm'
 
 function App() {
   return (
     <>
-      <h1>Hello comments</h1>
+      <CommentForm />
     </>
   )
 }

@@ -3,6 +3,8 @@ import Comment from '../entities/Comment.js'
 import createError from 'http-errors'
 import sanitizeComment from '../utils/sanitizeComment.js'
 import { broadcast } from '../utils/websocket.js'
+import { validateCommentInput } from '../utils/comment.validator.js'
+import { isValidXHTML } from '../utils/htmlValidator.js'
 
 class CommentsService {
   async getRootComments({ page, limit, sort, order }) {
@@ -40,6 +42,8 @@ class CommentsService {
     if (!captcha) {
       throw createError(400, 'CAPTCHA required')
     }
+    const errors = validateCommentInput({ userName, email, homePage, text })
+    if (errors.length > 0) throw createError(400, errors.join(', '))
 
     const repo = AppDataSource.getRepository(Comment)
 
@@ -49,6 +53,12 @@ class CommentsService {
       if (!parent) {
         throw createError(404, 'Parent comment not found')
       }
+    }
+    if (!isValidXHTML(text)) {
+      throw createError(
+        400,
+        'Invalid XHTML: make sure all tags are properly closed'
+      )
     }
     const newComment = repo.create({
       userName,

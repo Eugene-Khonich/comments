@@ -30,12 +30,16 @@ class CommentsController {
     if (req.file) {
       fileInfo = await fileService.processUploadedFile(req.file)
     }
-
     const newComment = await commentsService.createComment({
       ...commentData,
       file: fileInfo?.filename || null,
     })
     res.status(201).json(newComment)
+  }
+
+  async getAllCommentsTree(req, res) {
+    const tree = await commentsService.buildCommentTree()
+    res.json(tree)
   }
 
   async previewComment(req, res) {

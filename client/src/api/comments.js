@@ -14,8 +14,16 @@ export const sendComment = async (values) => {
   Object.entries(values).forEach(([key, val]) => {
     if (val) formData.append(key, val)
   })
-  for (let pair of formData.entries()) {
-    console.log(pair[0], pair[1])
-  }
-  await API.post('/comments', formData)
+  const res = await API.post('/comments', formData)
+  return res.data
+}
+
+export const fetchComments = async (params) => {
+  const res = await API.get('/comments', { params })
+  return res.data
+}
+
+export const fetchReplies = async (parentId) => {
+  const res = await API.get(`/comments/replies/${parentId}`)
+  return res.data
 }

@@ -32,6 +32,10 @@ const Comment = new EntitySchema({
       type: 'timestamp',
       createDate: true,
     },
+    parentId: {
+      type: 'int',
+      nullable: true,
+    },
   },
   relations: {
     parent: {
@@ -39,6 +43,7 @@ const Comment = new EntitySchema({
       type: 'many-to-one',
       nullable: true,
       inverseSide: 'children',
+      joinColumn: { name: 'parentId' },
     },
     children: {
       target: 'Comment',

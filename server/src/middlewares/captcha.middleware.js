@@ -2,14 +2,21 @@ import createError from 'http-errors'
 import captchaService from '../services/captcha.service.js'
 
 const validateCaptcha = (req, res, next) => {
-  const { captchaId, captcha } = req.body
+  let captcha
+  try {
+    captcha =
+      typeof req.body.captcha === 'string'
+        ? JSON.parse(req.body.captcha)
+        : req.body.captcha
+  } catch {
+    return next(createError(400, 'Invalid CAPTCHA format'))
+  }
 
-  if (!captchaId || !captcha) {
+  if (!captcha?.id || !captcha?.text) {
     return next(createError(400, 'Captcha ID and text are required'))
   }
 
-  const isValid = captchaService.validateCaptcha(captchaId, captcha)
-
+  const isValid = captchaService.validateCaptcha(captcha.id, captcha.text)
   if (!isValid) {
     return next(createError(400, 'Invalid CAPTCHA'))
   }

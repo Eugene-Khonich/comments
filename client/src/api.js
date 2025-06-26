@@ -12,7 +12,13 @@ export const fetchCaptcha = async () => {
 export const sendComment = async (values) => {
   const formData = new FormData()
   Object.entries(values).forEach(([key, val]) => {
-    if (val) formData.append(key, val)
+    if (val) {
+      if (key === 'captcha' && typeof val === 'object') {
+        formData.append('captcha', JSON.stringify(val))
+      } else {
+        formData.append(key, val)
+      }
+    }
   })
   const res = await API.post('/comments', formData)
   return res.data
@@ -32,5 +38,5 @@ export const fetchReplies = async (parentId) => {
 
 export const fetchPreview = async (text) => {
   const res = await API.post('/comments/preview', { text })
-  return res.data.preview
+  return res.data
 }

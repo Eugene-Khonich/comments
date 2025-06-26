@@ -13,21 +13,30 @@ class CommentsService {
     const sortField = allowedSortFields.includes(sort) ? sort : 'createdAt'
     const sortOrder = order?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'
 
-    const [roots, total] = await repo.findAndCount({
-      where: { parent: null },
+    const [allComments, total] = await repo.findAndCount({
+      relations: ['parent'],
       order: { [sortField]: sortOrder },
       skip: (page - 1) * limit,
       take: limit,
     })
+
+    // Фільтруємо кореневі
+    const roots = allComments.filter((comment) => !comment.parent)
+
+    // Рекурсивна функція для побудови дерева
     async function getRepliesRecursive(comment) {
-      const replies = await repo.find({
-        where: { parent: comment },
-        order: { [sortField]: sortOrder },
-      })
-      comment.replies = await Promise.all(replies.map(getRepliesRecursive))
+      comment.replies = allComments.filter((c) => c.parent?.id === comment.id)
+      // Якщо треба глибше, можна рекурсивно для replies викликати
+      comment.replies = await Promise.all(
+        comment.replies.map((r) => getRepliesRecursive(r))
+      )
       return comment
     }
-    const data = await Promise.all(roots.map(getRepliesRecursive))
+
+    const data = await Promise.all(roots.map((c) => getRepliesRecursive(c)))
+
+    console.log('FULL TREE:', JSON.stringify(data, null, 2))
+
     return {
       data,
       total,
@@ -67,6 +76,7 @@ class CommentsService {
         'Invalid XHTML: make sure all tags are properly closed'
       )
     }
+    delete data.parentId
     const newComment = repo.create({
       userName,
       email,
@@ -77,10 +87,7 @@ class CommentsService {
       createdAt: new Date(),
     })
     await repo.save(newComment)
-    broadcast({
-      type: 'new_comment',
-      comment: newComment,
-    })
+    broadcast({ type: 'new_comment', commentId: newComment.id })
     return newComment
   }
 

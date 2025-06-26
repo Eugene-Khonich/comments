@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react'
-import { fetchCaptcha, fetchPreview, sendComment } from '../api'
+import { fetchCaptcha, sendComment } from '../api'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import validationSchema from '../utils/validators'
 
 export default function CommentForm({ parentId = null, onCancel }) {
   const [captcha, setCaptcha] = useState(null)
-  const [preview, setPreview] = useState('')
   const [file, setFile] = useState(null)
-  const [textValue, setTextValue] = useState('') // <- новий стан
 
   const loadCaptcha = async () => {
     const data = await fetchCaptcha()
@@ -18,25 +16,13 @@ export default function CommentForm({ parentId = null, onCancel }) {
     loadCaptcha()
   }, [])
 
-  useEffect(() => {
-    const handler = setTimeout(async () => {
-      if (!textValue) {
-        setPreview('')
-        return
-      }
-      const previewData = await fetchPreview(textValue)
-      setPreview(previewData)
-    }, 500)
-
-    return () => clearTimeout(handler)
-  }, [textValue])
-
   const initialValues = {
     userName: '',
     email: '',
     homePage: '',
-    captchaText: '',
     text: '',
+    captchaText: '',
+    captchaId: captcha?.id || '',
     parentId,
     file: null,
   }
@@ -54,12 +40,14 @@ export default function CommentForm({ parentId = null, onCancel }) {
       }
 
       await sendComment(values)
-      alert('Comment sent')
       resetForm()
       setFile(null)
-      setTextValue('')
       loadCaptcha()
       if (onCancel) onCancel()
+
+      if (typeof window !== 'undefined' && window.dispatchEvent) {
+        window.dispatchEvent(new Event('comment_added'))
+      }
     } catch (e) {
       alert(e.response?.data?.message || e.message)
     } finally {
@@ -121,15 +109,7 @@ export default function CommentForm({ parentId = null, onCancel }) {
 
           <div>
             <label>Text *</label>
-            <Field
-              name="text"
-              as="textarea"
-              rows={4}
-              onChange={(e) => {
-                setFieldValue('text', e.target.value)
-                setTextValue(e.target.value) // <- оновлюємо наш стан
-              }}
-            />
+            <Field name="text" as="textarea" rows={4} />
             <ErrorMessage
               name="text"
               component="div"
@@ -173,19 +153,6 @@ export default function CommentForm({ parentId = null, onCancel }) {
               Cancel
             </button>
           )}
-
-          {/* Preview */}
-          <div style={{ marginTop: 10 }}>
-            <b>Preview:</b>
-            <div
-              style={{
-                border: '1px solid #ddd',
-                padding: 5,
-                minHeight: 50,
-              }}
-              dangerouslySetInnerHTML={{ __html: preview }}
-            />
-          </div>
         </Form>
       )}
     </Formik>

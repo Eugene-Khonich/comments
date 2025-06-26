@@ -1,17 +1,31 @@
-import Joi from 'joi'
+import * as Yup from 'yup'
 
-const validationSchema = Joi.object({
-  userName: Joi.string()
-    .alphanum()
-    .min(2)
-    .max(100)
-    .required()
-    .label('User Name'),
-  email: Joi.string().email({ tlds: false }).required().label('Email'),
-  homePage: Joi.string().uri().allow('', null).label('Home Page'),
-  text: Joi.string().min(1).required().label('Text'),
-  captcha: Joi.string().alphanum().required().label('CAPTCHA'),
-  file: Joi.any(),
+const validationSchema = Yup.object().shape({
+  userName: Yup.string()
+    .matches(/^[a-zA-Z0-9]+$/, 'Only alphanumeric characters allowed')
+    .min(2, 'Too short')
+    .max(100, 'Too long')
+    .required('User Name is required'),
+
+  email: Yup.string()
+    .email('Invalid email format')
+    .required('Email is required'),
+
+  homePage: Yup.string()
+    .url('Invalid URL')
+    .nullable()
+    .notRequired()
+    .transform((value) => (value === '' ? null : value)),
+
+  text: Yup.string()
+    .min(1, 'Message cannot be empty')
+    .required('Text is required'),
+
+  captchaText: Yup.string()
+    .matches(/^[a-zA-Z0-9]+$/, 'Only alphanumeric characters allowed')
+    .required('CAPTCHA is required'),
+
+  file: Yup.mixed().notRequired(), // Валідація файлу — на сервері
 })
 
 export default validationSchema

@@ -7,17 +7,27 @@ import { validateCommentInput } from '../utils/comment.validator.js'
 import { isValidXHTML } from '../utils/htmlValidator.js'
 
 class CommentsService {
-  async getRootComments({ page, limit, sort, order }) {
+  async getCommentTree({ page, limit, sort, order }) {
     const repo = AppDataSource.getRepository(Comment)
     const allowedSortFields = ['userName', 'email', 'createdAt']
     const sortField = allowedSortFields.includes(sort) ? sort : 'createdAt'
     const sortOrder = order?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'
-    const [data, total] = await repo.findAndCount({
-      where: { parentId: null },
+
+    const [roots, total] = await repo.findAndCount({
+      where: { parent: null },
       order: { [sortField]: sortOrder },
       skip: (page - 1) * limit,
       take: limit,
     })
+    async function getRepliesRecursive(comment) {
+      const replies = await repo.find({
+        where: { parent: comment },
+        order: { [sortField]: sortOrder },
+      })
+      comment.replies = await Promise.all(replies.map(getRepliesRecursive))
+      return comment
+    }
+    const data = await Promise.all(roots.map(getRepliesRecursive))
     return {
       data,
       total,

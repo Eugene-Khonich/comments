@@ -5,17 +5,17 @@ class CommentsController {
   async getComments(req, res) {
     const {
       page = 1,
-      limit = 25,
+      limit = 5,
       sort = 'createdAt',
       order = 'DESC',
     } = req.query
-    const comments = await commentsService.getRootComments({
-      page: Number(page),
-      limit: Number(limit),
+    const result = await commentsService.getCommentTree({
+      page,
+      limit,
       sort,
       order,
     })
-    res.json(comments)
+    res.json(result)
   }
 
   async getReplies(req, res) {

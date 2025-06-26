@@ -18,12 +18,19 @@ export const sendComment = async (values) => {
   return res.data
 }
 
-export const fetchComments = async (params) => {
-  const res = await API.get('/comments', { params })
+export const fetchCommentTree = async ({ page, limit, sort, order }) => {
+  const res = await API.get('/comments', {
+    params: { page, limit, sort, order },
+  })
   return res.data
 }
 
 export const fetchReplies = async (parentId) => {
   const res = await API.get(`/comments/replies/${parentId}`)
   return res.data
+}
+
+export const fetchPreview = async (text) => {
+  const res = await API.post('/comments/preview', { text })
+  return res.data.preview
 }

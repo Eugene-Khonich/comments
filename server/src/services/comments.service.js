@@ -7,17 +7,27 @@ import { validateCommentInput } from '../utils/comment.validator.js'
 import { isValidXHTML } from '../utils/htmlValidator.js'
 
 class CommentsService {
-  async getRootComments({ page, limit, sort, order }) {
+  async getCommentTree({ page, limit, sort, order }) {
     const repo = AppDataSource.getRepository(Comment)
     const allowedSortFields = ['userName', 'email', 'createdAt']
     const sortField = allowedSortFields.includes(sort) ? sort : 'createdAt'
     const sortOrder = order?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'
-    const [data, total] = await repo.findAndCount({
-      where: { parentId: null },
+
+    const [roots, total] = await repo.findAndCount({
+      where: { parent: null },
       order: { [sortField]: sortOrder },
       skip: (page - 1) * limit,
       take: limit,
     })
+    async function getRepliesRecursive(comment) {
+      const replies = await repo.find({
+        where: { parent: comment },
+        order: { [sortField]: sortOrder },
+      })
+      comment.replies = await Promise.all(replies.map(getRepliesRecursive))
+      return comment
+    }
+    const data = await Promise.all(roots.map(getRepliesRecursive))
     return {
       data,
       total,
@@ -38,15 +48,12 @@ class CommentsService {
 
   async createComment(data) {
     const { userName, email, homePage, text, captcha, parentId, file } = data
-
     if (!captcha) {
       throw createError(400, 'CAPTCHA required')
     }
     const errors = validateCommentInput({ userName, email, homePage, text })
     if (errors.length > 0) throw createError(400, errors.join(', '))
-
     const repo = AppDataSource.getRepository(Comment)
-
     let parent = null
     if (parentId) {
       parent = await repo.findOne({ where: { id: Number(parentId) } })
@@ -69,7 +76,6 @@ class CommentsService {
       attachment: file || null,
       createdAt: new Date(),
     })
-
     await repo.save(newComment)
     broadcast({
       type: 'new_comment',

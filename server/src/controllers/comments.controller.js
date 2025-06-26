@@ -5,17 +5,17 @@ class CommentsController {
   async getComments(req, res) {
     const {
       page = 1,
-      limit = 25,
+      limit = 5,
       sort = 'createdAt',
       order = 'DESC',
     } = req.query
-    const comments = await commentsService.getRootComments({
-      page: Number(page),
-      limit: Number(limit),
+    const result = await commentsService.getCommentTree({
+      page,
+      limit,
       sort,
       order,
     })
-    res.json(comments)
+    res.json(result)
   }
 
   async getReplies(req, res) {
@@ -30,7 +30,6 @@ class CommentsController {
     if (req.file) {
       fileInfo = await fileService.processUploadedFile(req.file)
     }
-
     const newComment = await commentsService.createComment({
       ...commentData,
       file: fileInfo?.filename || null,

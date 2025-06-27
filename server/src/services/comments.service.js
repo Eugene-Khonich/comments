@@ -12,31 +12,21 @@ class CommentsService {
     const allowedSortFields = ['userName', 'email', 'createdAt']
     const sortField = allowedSortFields.includes(sort) ? sort : 'createdAt'
     const sortOrder = order?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC'
-
     const [allComments, total] = await repo.findAndCount({
       relations: ['parent'],
       order: { [sortField]: sortOrder },
       skip: (page - 1) * limit,
       take: limit,
     })
-
-    // Фільтруємо кореневі
     const roots = allComments.filter((comment) => !comment.parent)
-
-    // Рекурсивна функція для побудови дерева
     async function getRepliesRecursive(comment) {
       comment.replies = allComments.filter((c) => c.parent?.id === comment.id)
-      // Якщо треба глибше, можна рекурсивно для replies викликати
       comment.replies = await Promise.all(
         comment.replies.map((r) => getRepliesRecursive(r))
       )
       return comment
     }
-
     const data = await Promise.all(roots.map((c) => getRepliesRecursive(c)))
-
-    console.log('FULL TREE:', JSON.stringify(data, null, 2))
-
     return {
       data,
       total,
@@ -89,24 +79,6 @@ class CommentsService {
     await repo.save(newComment)
     broadcast({ type: 'new_comment', commentId: newComment.id })
     return newComment
-  }
-
-  async buildCommentTree(parentId = null) {
-    const repo = AppDataSource.getRepository(Comment)
-    const comments = await repo.find({
-      where: { parent: parentId ? { id: parentId } : null },
-      order: { createdAt: 'ASC' },
-    })
-    const tree = await Promise.all(
-      comments.map(async (comment) => {
-        const replies = await this.buildCommentTree(comment.id)
-        return {
-          ...comment,
-          replies,
-        }
-      })
-    )
-    return tree
   }
 
   async previewComment(text) {

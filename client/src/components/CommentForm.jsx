@@ -24,7 +24,6 @@ export default function CommentForm({ parentId = null, onCancel }) {
     captchaText: '',
     captchaId: captcha?.id || '',
     parentId,
-    file: null,
   }
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {

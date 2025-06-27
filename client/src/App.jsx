@@ -31,10 +31,7 @@ export default function App() {
       {!activeReplyId && showForm && (
         <>
           <h2>Add a Comment</h2>
-          <CommentForm
-            onCancel={() => setShowForm(false)}
-            onSuccess={() => window.location.reload()} // перезавантаження або emit WebSocket
-          />
+          <CommentForm onCancel={() => setShowForm(false)} />
         </>
       )}
     </div>

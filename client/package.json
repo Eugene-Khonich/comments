@@ -15,6 +15,8 @@
     "joi": "^17.13.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "slide": "^1.1.6",
+    "yet-another-react-lightbox": "^3.23.4",
     "yup": "^1.6.1"
   },
   "devDependencies": {

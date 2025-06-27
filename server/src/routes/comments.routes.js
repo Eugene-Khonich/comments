@@ -1,11 +1,10 @@
 import { Router } from 'express'
-import multer from 'multer'
+import upload from '../middlewares/multer.js'
 import commentsController from '../controllers/comments.controller.js'
 import { ctrlWrapper } from '../utils/ctrlWrapper.js'
 import validateCaptcha from '../middlewares/captcha.middleware.js'
 
 const router = Router()
-const upload = multer({ dest: 'uploads/' })
 
 router.get('/', ctrlWrapper(commentsController.getComments))
 router.get('/tree', ctrlWrapper(commentsController.getAllCommentsTree))

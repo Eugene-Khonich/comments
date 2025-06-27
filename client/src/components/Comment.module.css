@@ -17,8 +17,8 @@
 }
 
 .image {
-  max-width: 320px;
-  max-height: 240px;
+  max-width: 80px;
+  max-height: 60px;
   display: block;
   margin-top: 5px;
 }

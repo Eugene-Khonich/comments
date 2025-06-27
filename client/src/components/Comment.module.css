@@ -1,0 +1,43 @@
+.comment {
+  margin-top: 10px;
+  padding-left: 10px;
+}
+
+.nested {
+  margin-left: 20px;
+  border-left: 1px solid #ccc;
+}
+
+.header {
+  margin-bottom: 5px;
+}
+
+.attachment {
+  margin-top: 5px;
+}
+
+.image {
+  max-width: 320px;
+  max-height: 240px;
+  display: block;
+  margin-top: 5px;
+}
+
+.download {
+  margin-top: 5px;
+  display: inline-block;
+  color: #0077cc;
+  text-decoration: none;
+}
+
+.download:hover {
+  text-decoration: underline;
+}
+
+.replyButton {
+  margin-top: 5px;
+}
+
+.replies {
+  margin-top: 10px;
+}

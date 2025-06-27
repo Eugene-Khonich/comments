@@ -1,6 +1,7 @@
 import CommentList from './components/CommentList'
 import CommentForm from './components/CommentForm'
 import { useState } from 'react'
+import styles from './App.module.css'
 
 export default function App() {
   const [activeReplyId, setActiveReplyId] = useState(null)
@@ -15,8 +16,14 @@ export default function App() {
   }
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: 20 }}>
-      <h1>Comments</h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Comments</h1>
+
+      {!activeReplyId && !showForm && (
+        <button className={styles.addButton} onClick={() => setShowForm(true)}>
+          Add a Comment
+        </button>
+      )}
 
       <CommentList
         onReplyClick={handleReplyClick}
@@ -24,15 +31,11 @@ export default function App() {
         onCancelReply={handleCancelReply}
       />
 
-      {!activeReplyId && !showForm && (
-        <button onClick={() => setShowForm(true)}>Add a Comment</button>
-      )}
-
       {!activeReplyId && showForm && (
-        <>
+        <div className={styles.formSection}>
           <h2>Add a Comment</h2>
           <CommentForm onCancel={() => setShowForm(false)} />
-        </>
+        </div>
       )}
     </div>
   )

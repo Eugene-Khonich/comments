@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { fetchCaptcha, sendComment } from '../api'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import validationSchema from '../utils/validators'
+import styles from './CommentForm.module.css'
 
 export default function CommentForm({ parentId = null, onCancel }) {
   const [captcha, setCaptcha] = useState(null)
@@ -68,90 +69,103 @@ export default function CommentForm({ parentId = null, onCancel }) {
       onSubmit={handleSubmit}
     >
       {({ isSubmitting, setFieldValue }) => (
-        <Form
-          style={{
-            marginTop: 20,
-            marginBottom: 20,
-            border: '1px solid #ccc',
-            padding: 10,
-          }}
-        >
+        <Form className={styles.form}>
           <div>
-            <label>User Name *</label>
-            <Field name="userName" />
+            <label className={styles.label}>User Name *</label>
+            <Field name="userName" className={styles.input} />
             <ErrorMessage
               name="userName"
               component="div"
-              style={{ color: 'red' }}
+              className={styles.error}
             />
           </div>
 
           <div>
-            <label>Email *</label>
-            <Field name="email" type="email" />
+            <label className={styles.label}>Email *</label>
+            <Field name="email" type="email" className={styles.input} />
             <ErrorMessage
               name="email"
               component="div"
-              style={{ color: 'red' }}
+              className={styles.error}
             />
           </div>
 
           <div>
-            <label>Home page</label>
-            <Field name="homePage" />
+            <label className={styles.label}>Home page</label>
+            <Field name="homePage" className={styles.input} />
             <ErrorMessage
               name="homePage"
               component="div"
-              style={{ color: 'red' }}
+              className={styles.error}
             />
           </div>
 
           <div>
-            <label>Text *</label>
-            <Field name="text" as="textarea" rows={4} />
+            <label className={styles.label}>Text *</label>
+            <Field
+              name="text"
+              as="textarea"
+              className={styles.textarea}
+              rows={4}
+            />
             <ErrorMessage
               name="text"
               component="div"
-              style={{ color: 'red' }}
+              className={styles.error}
             />
           </div>
 
           <div>
-            <label>Attachment (image or txt)</label>
+            <label className={styles.label}>Attachment (image or txt)</label>
             <input
               type="file"
               accept=".jpg,.jpeg,.png,.gif,.txt"
               onChange={(e) => handleFileChange(e, setFieldValue)}
+              className={styles.fileInput}
             />
           </div>
 
-          <div>
-            <label>CAPTCHA *</label>
-            {captcha && (
-              <div
-                dangerouslySetInnerHTML={{ __html: captcha.data }}
-                style={{ marginBottom: 5 }}
+          <div className={styles.captchaWrapper}>
+            <div>
+              <label className={styles.label}>CAPTCHA *</label>
+              {captcha && (
+                <div
+                  className={styles.captchaImage}
+                  dangerouslySetInnerHTML={{ __html: captcha.data }}
+                />
+              )}
+              <button type="button" onClick={loadCaptcha}>
+                Refresh CAPTCHA
+              </button>
+            </div>
+            <div>
+              <Field name="captchaText" className={styles.input} />
+              <ErrorMessage
+                name="captchaText"
+                component="div"
+                className={styles.error}
               />
-            )}
-            <button type="button" onClick={loadCaptcha}>
-              Refresh CAPTCHA
-            </button>
-            <Field name="captchaText" />
-            <ErrorMessage
-              name="captchaText"
-              component="div"
-              style={{ color: 'red' }}
-            />
+            </div>
           </div>
 
-          <button type="submit" disabled={isSubmitting}>
-            {parentId ? 'Reply' : 'Send Comment'}
-          </button>
-          {onCancel && (
-            <button type="button" onClick={onCancel} style={{ marginLeft: 10 }}>
-              Cancel
+          <div className={styles.buttonGroup}>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={styles.submitButton}
+            >
+              {parentId ? 'Reply' : 'Send Comment'}
             </button>
-          )}
+            {onCancel && (
+              <button
+                type="button"
+                onClick={onCancel}
+                className={styles.cancelButton}
+              >
+                Cancel
+              </button>
+            )}
+          </div>
         </Form>
       )}
     </Formik>

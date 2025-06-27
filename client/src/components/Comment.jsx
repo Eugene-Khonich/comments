@@ -1,4 +1,5 @@
 import CommentForm from './CommentForm'
+import styles from './Comment.module.css'
 
 export default function Comment({
   comment,
@@ -6,41 +7,42 @@ export default function Comment({
   activeReplyId,
   onCancelReply,
 }) {
+  const isNested = Boolean(comment.parent)
+
   return (
-    <div
-      style={{
-        marginLeft: comment.parent ? 20 : 0,
-        borderLeft: comment.parent ? '1px solid #ccc' : 'none',
-        paddingLeft: 10,
-        marginTop: 10,
-      }}
-    >
-      <div>
+    <div className={`${styles.comment} ${isNested ? styles.nested : ''}`}>
+      <div className={styles.header}>
         <b>{comment.userName}</b> ({comment.email}){' '}
         <i>{new Date(comment.createdAt).toLocaleString()}</i>
       </div>
+
       <div dangerouslySetInnerHTML={{ __html: comment.text }} />
+
       {comment.attachment && (
-        <div>
+        <div className={styles.attachment}>
           {/\.(jpg|jpeg|png|gif)$/i.test(comment.attachment) ? (
             <img
               src={`/uploads/${comment.attachment}`}
               alt="attachment"
-              style={{ maxWidth: 320, maxHeight: 240, marginTop: 5 }}
+              className={styles.image}
             />
           ) : (
             <a
               href={`/uploads/${comment.attachment}`}
               target="_blank"
               rel="noreferrer"
-              style={{ marginTop: 5, display: 'inline-block' }}
+              className={styles.download}
             >
               Download attachment
             </a>
           )}
         </div>
       )}
-      <button onClick={() => onReplyClick(comment.id)} style={{ marginTop: 5 }}>
+
+      <button
+        onClick={() => onReplyClick(comment.id)}
+        className={styles.replyButton}
+      >
         Reply
       </button>
 
@@ -48,9 +50,8 @@ export default function Comment({
         <CommentForm parentId={comment.id} onCancel={onCancelReply} />
       )}
 
-      {/* Відповіді */}
       {comment.replies && comment.replies.length > 0 && (
-        <div>
+        <div className={styles.replies}>
           {comment.replies.map((reply) => (
             <Comment
               key={reply.id}

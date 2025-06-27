@@ -1,0 +1,67 @@
+# render.yaml
+services:
+  # Сервер (Node.js API)
+  - type: web
+    name: comments-server
+    runtime: docker
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: ./server
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: DB_HOST
+        fromDatabase:
+          name: comments-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: comments-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: comments-db
+          property: user
+      - key: DB_PASS
+        fromDatabase:
+          name: comments-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: comments-db
+          property: database
+      - key: DATABASE_URL
+        fromDatabase:
+          name: comments-db
+          property: connectionString
+      # Секретные переменные (вам будет предложено ввести при деплое)
+      - key: JWT_SECRET
+        generateValue: true
+      - key: POSTGRES_USER
+        sync: false
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: POSTGRES_DB
+        sync: false
+
+  # Клиент (статический сайт)
+  - type: web
+    name: comments-client
+    runtime: static
+    rootDir: ./client
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    plan: free
+    envVars:
+      - key: VITE_API_URL
+        value: https://comments-server.onrender.com # Замените на ваш URL сервера
+
+# База данных PostgreSQL
+databases:
+  - name: comments-db
+    plan: free
+    databaseName: comments_db
+    user: comments_user

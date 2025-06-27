@@ -1,5 +1,8 @@
 import CommentForm from './CommentForm'
 import styles from './Comment.module.css'
+import 'yet-another-react-lightbox/styles.css'
+import Lightbox from 'yet-another-react-lightbox'
+import { useState } from 'react'
 
 export default function Comment({
   comment,
@@ -7,6 +10,9 @@ export default function Comment({
   activeReplyId,
   onCancelReply,
 }) {
+  const [open, setOpen] = useState(false)
+
+  const isImage = /\.(jpg|jpeg|png|gif)$/i.test(comment.attachment || '')
   const isNested = Boolean(comment.parent)
 
   return (
@@ -20,12 +26,25 @@ export default function Comment({
 
       {comment.attachment && (
         <div className={styles.attachment}>
-          {/\.(jpg|jpeg|png|gif)$/i.test(comment.attachment) ? (
-            <img
-              src={`/uploads/${comment.attachment}`}
-              alt="attachment"
-              className={styles.image}
-            />
+          {isImage ? (
+            <>
+              <img
+                src={`http://localhost:3001/uploads/${comment.attachment}`}
+                alt="attachment"
+                className={styles.image}
+                onClick={() => setOpen(true)}
+                style={{ cursor: 'pointer' }}
+              />
+              <Lightbox
+                open={open}
+                close={() => setOpen(false)}
+                slides={[
+                  {
+                    src: `http://localhost:3001/uploads/${comment.attachment}`,
+                  },
+                ]}
+              />
+            </>
           ) : (
             <a
               href={`/uploads/${comment.attachment}`}
@@ -50,7 +69,7 @@ export default function Comment({
         <CommentForm parentId={comment.id} onCancel={onCancelReply} />
       )}
 
-      {comment.replies && comment.replies.length > 0 && (
+      {comment.replies?.length > 0 && (
         <div className={styles.replies}>
           {comment.replies.map((reply) => (
             <Comment

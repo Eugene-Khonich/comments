@@ -1,0 +1,102 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  background-color: #fafafa;
+  border-radius: 4px;
+}
+
+.input,
+.textarea,
+.select,
+.fileInput {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.error {
+  color: #c00;
+  font-size: 12px;
+}
+
+.captchaWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.captchaImage {
+  border: 1px solid #ccc;
+  padding: 4px;
+  background-color: #fff;
+}
+
+.preview {
+  background-color: #f0f0f0;
+  padding: 10px;
+  margin-top: 10px;
+  border-left: 4px solid #0077cc;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.submitButton,
+.cancelButton {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submitButton {
+  background-color: #0077cc;
+  color: white;
+}
+
+.submitButton:hover {
+  background-color: #005fa3;
+}
+
+.cancelButton {
+  background-color: #eee;
+}
+
+.cancelButton:hover {
+  background-color: #ddd;
+}
+
+.toolbar {
+  display: flex;
+  gap: 5px;
+}
+
+.toolbarButton {
+  font-size: 14px;
+  padding: 2px 6px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.toolbarButton:hover {
+  background-color: #e5e5e5;
+}

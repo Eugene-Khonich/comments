@@ -1,0 +1,49 @@
+.wrapper {
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.sortControls {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sortButton {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.sortButton:hover {
+  background-color: #e0e0e0;
+}
+
+.commentList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pagination {
+  margin-top: 20px;
+}
+
+.pagination button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  background: #f7f7f7;
+}
+
+.activePage {
+  font-weight: bold;
+  background-color: #d0ebff;
+}

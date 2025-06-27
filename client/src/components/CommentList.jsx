@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { fetchCommentTree } from '../api'
 import Comment from './Comment'
+import styles from './CommentList.module.css'
 
 export default function CommentList({
   onReplyClick,
@@ -42,38 +43,41 @@ export default function CommentList({
   }
 
   return (
-    <div>
-      <div style={{ marginBottom: 10 }}>
-        <label>Sort by: </label>
-        <select value={sort} onChange={(e) => setSort(e.target.value)}>
+    <div className={styles.wrapper}>
+      <div className={styles.sortControls}>
+        <label htmlFor="sort">Sort by: </label>
+        <select
+          id="sort"
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+        >
           <option value="userName">User Name</option>
           <option value="email">Email</option>
           <option value="createdAt">Date</option>
         </select>
-        <button onClick={toggleOrder}>
+        <button onClick={toggleOrder} className={styles.sortButton}>
           {order === 'ASC' ? '⬆ Ascending' : '⬇ Descending'}
         </button>
       </div>
 
-      {comments.map((comment) => (
-        <Comment
-          key={comment.id}
-          comment={comment}
-          onReplyClick={onReplyClick}
-          activeReplyId={activeReplyId}
-          onCancelReply={onCancelReply}
-        />
-      ))}
+      <div className={styles.commentList}>
+        {comments.map((comment) => (
+          <Comment
+            key={comment.id}
+            comment={comment}
+            onReplyClick={onReplyClick}
+            activeReplyId={activeReplyId}
+            onCancelReply={onCancelReply}
+          />
+        ))}
+      </div>
 
-      <div style={{ marginTop: 20 }}>
+      <div className={styles.pagination}>
         {Array.from({ length: totalPages }, (_, i) => (
           <button
             key={i}
             onClick={() => setPage(i + 1)}
-            style={{
-              marginRight: 5,
-              fontWeight: i + 1 === page ? 'bold' : 'normal',
-            }}
+            className={i + 1 === page ? styles.activePage : ''}
           >
             {i + 1}
           </button>

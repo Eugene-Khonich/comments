@@ -1,15 +1,17 @@
 .comment {
   margin-top: 10px;
   padding-left: 10px;
+  border-left: 1px solid #ccc;
+  border-top: 1px solid #ccc;
 }
 
 .nested {
   margin-left: 20px;
-  border-left: 1px solid #ccc;
 }
 
 .header {
   margin-bottom: 5px;
+  background-color: #c7dff0;
 }
 
 .attachment {
@@ -26,7 +28,7 @@
 .download {
   margin-top: 5px;
   display: inline-block;
-  color: #0077cc;
+  color: #3498db;
   text-decoration: none;
 }
 
@@ -36,8 +38,13 @@
 
 .replyButton {
   margin-top: 5px;
+  color: white;
+  background-color: #3498db;
 }
 
+.replyButton:hover {
+  background-color: #2980b9;
+}
 .replies {
   margin-top: 10px;
 }

@@ -82,6 +82,13 @@ class CommentsService {
   }
 
   async previewComment(text) {
+    if (!text || typeof text !== 'string') {
+      throw new Error('Text is required')
+    }
+
+    if (!isValidXHTML(text)) {
+      throw new Error('Invalid XHTML: tags must be properly closed')
+    }
     return sanitizeComment(text)
   }
 }

@@ -25,18 +25,18 @@ export default function App() {
         </button>
       )}
 
-      <CommentList
-        onReplyClick={handleReplyClick}
-        activeReplyId={activeReplyId}
-        onCancelReply={handleCancelReply}
-      />
-
       {!activeReplyId && showForm && (
         <div className={styles.formSection}>
           <h2>Add a Comment</h2>
           <CommentForm onCancel={() => setShowForm(false)} />
         </div>
       )}
+
+      <CommentList
+        onReplyClick={handleReplyClick}
+        activeReplyId={activeReplyId}
+        onCancelReply={handleCancelReply}
+      />
     </div>
   )
 }

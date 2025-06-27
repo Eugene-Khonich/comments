@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchCaptcha, sendComment } from '../api'
+import { fetchCaptcha, sendComment, fetchPreview } from '../api'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import validationSchema from '../utils/validators'
 import styles from './CommentForm.module.css'
@@ -7,6 +7,7 @@ import styles from './CommentForm.module.css'
 export default function CommentForm({ parentId = null, onCancel }) {
   const [captcha, setCaptcha] = useState(null)
   const [file, setFile] = useState(null)
+  const [previewHtml, setPreviewHtml] = useState(null)
 
   const loadCaptcha = async () => {
     const data = await fetchCaptcha()
@@ -42,6 +43,7 @@ export default function CommentForm({ parentId = null, onCancel }) {
       await sendComment(values)
       resetForm()
       setFile(null)
+      setPreviewHtml(null)
       loadCaptcha()
       if (onCancel) onCancel()
 
@@ -61,6 +63,15 @@ export default function CommentForm({ parentId = null, onCancel }) {
     setFieldValue('file', selectedFile)
   }
 
+  const handlePreview = async (values) => {
+    try {
+      const data = await fetchPreview(values.text)
+      setPreviewHtml(data.preview)
+    } catch (e) {
+      alert(e.response?.data?.message || 'Error loading preview')
+    }
+  }
+
   return (
     <Formik
       initialValues={initialValues}
@@ -68,7 +79,7 @@ export default function CommentForm({ parentId = null, onCancel }) {
       enableReinitialize
       onSubmit={handleSubmit}
     >
-      {({ isSubmitting, setFieldValue }) => {
+      {({ isSubmitting, setFieldValue, values }) => {
         const insertTag = (tag, attrs = '') => {
           const textarea = document.querySelector('textarea[name="text"]')
           if (!textarea) return
@@ -93,6 +104,7 @@ export default function CommentForm({ parentId = null, onCancel }) {
             )
           }, 0)
         }
+
         return (
           <Form className={styles.form}>
             <div>
@@ -124,6 +136,7 @@ export default function CommentForm({ parentId = null, onCancel }) {
                 className={styles.error}
               />
             </div>
+
             <div className={styles.toolbar}>
               <button
                 type="button"
@@ -156,6 +169,7 @@ export default function CommentForm({ parentId = null, onCancel }) {
                 a
               </button>
             </div>
+
             <div>
               <label className={styles.label}>Text *</label>
               <Field
@@ -190,7 +204,11 @@ export default function CommentForm({ parentId = null, onCancel }) {
                     dangerouslySetInnerHTML={{ __html: captcha.data }}
                   />
                 )}
-                <button type="button" onClick={loadCaptcha}>
+                <button
+                  type="button"
+                  onClick={loadCaptcha}
+                  className={styles.refreshCaptchaButton}
+                >
                   Refresh CAPTCHA
                 </button>
               </div>
@@ -203,6 +221,23 @@ export default function CommentForm({ parentId = null, onCancel }) {
                 />
               </div>
             </div>
+
+            <div className={styles.previewButtonWrapper}>
+              <button
+                type="button"
+                onClick={() => handlePreview(values)}
+                className={styles.previewButton}
+              >
+                Preview
+              </button>
+            </div>
+
+            {previewHtml && (
+              <div className={styles.preview}>
+                <h4>Preview:</h4>
+                <div dangerouslySetInnerHTML={{ __html: previewHtml }} />
+              </div>
+            )}
 
             <div className={styles.buttonGroup}>
               <button

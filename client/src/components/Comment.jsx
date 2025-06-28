@@ -4,6 +4,8 @@ import 'yet-another-react-lightbox/styles.css'
 import Lightbox from 'yet-another-react-lightbox'
 import { useState } from 'react'
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL || ''
+
 export default function Comment({
   comment,
   onReplyClick,
@@ -29,7 +31,7 @@ export default function Comment({
           {isImage ? (
             <>
               <img
-                src={`http://localhost:3000/uploads/${comment.attachment}`}
+                src={`${baseUrl}/uploads/${comment.attachment}`}
                 alt="attachment"
                 className={styles.image}
                 onClick={() => setOpen(true)}
@@ -40,14 +42,14 @@ export default function Comment({
                 close={() => setOpen(false)}
                 slides={[
                   {
-                    src: `http://localhost:3000/uploads/${comment.attachment}`,
+                    src: `${baseUrl}/uploads/${comment.attachment}`,
                   },
                 ]}
               />
             </>
           ) : (
             <a
-              href={`/uploads/${comment.attachment}`}
+              href={`${baseUrl}/uploads/${comment.attachment}`}
               target="_blank"
               rel="noreferrer"
               className={styles.download}

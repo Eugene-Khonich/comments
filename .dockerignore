@@ -1,0 +1,8 @@
+node_modules
+temp
+uploads
+Dockerfile
+.dockerignore
+docker-compose.yaml
+README.md
+*.log

@@ -21,8 +21,8 @@ COPY server ./server
 COPY --from=client-build /client/dist ./server/src/dist
 
 # Копіюємо завантаження та тимчасові файли
-COPY uploads ./server/uploads
-COPY temp ./server/temp
+COPY server/uploads ./server/uploads
+COPY server/temp ./server/temp
 
 # Переходимо в серверну папку
 WORKDIR /app/server

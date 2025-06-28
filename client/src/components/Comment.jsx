@@ -29,7 +29,7 @@ export default function Comment({
           {isImage ? (
             <>
               <img
-                src={`http://localhost:3001/uploads/${comment.attachment}`}
+                src={`http://localhost:3000/uploads/${comment.attachment}`}
                 alt="attachment"
                 className={styles.image}
                 onClick={() => setOpen(true)}
@@ -40,7 +40,7 @@ export default function Comment({
                 close={() => setOpen(false)}
                 slides={[
                   {
-                    src: `http://localhost:3001/uploads/${comment.attachment}`,
+                    src: `http://localhost:3000/uploads/${comment.attachment}`,
                   },
                 ]}
               />

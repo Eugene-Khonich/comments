@@ -16,34 +16,21 @@ services:
 
   server:
     build:
-      context: ./server
+      context: .
+      dockerfile: Dockerfile
     container_name: comments_server
     restart: always
     env_file:
       - .env
     environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: ${POSTGRES_USER}
-      DB_PASS: ${POSTGRES_PASSWORD}
-      DB_NAME: ${POSTGRES_DB}
+      DATABASE_URL: postgres://postgres:secret_password@db:5432/comments
     depends_on:
       - db
     ports:
-      - "3001:3001"
+      - "3000:3000"
     volumes:
-      - ./uploads:/app/uploads
-      - ./temp:/app/temp
-
-  client:
-    build:
-      context: ./client
-    container_name: comments_client
-    restart: always
-    ports:
-      - "80:80"
-    depends_on:
-      - server
+      - ./uploads:/app/server/uploads
+      - ./temp:/app/server/temp
 
 volumes:
   pgdata:

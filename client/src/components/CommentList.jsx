@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { fetchCommentTree } from '../api'
 import Comment from './Comment'
 import styles from './CommentList.module.css'
+import useWebSocket from '../utils/useWebSockert'
 
 export default function CommentList({
   onReplyClick,
@@ -25,6 +26,12 @@ export default function CommentList({
       alert('Failed to load comments')
     }
   }, [page, sort, order])
+
+  useWebSocket((data) => {
+    if (data.type === 'new_comment') {
+      loadComments()
+    }
+  })
 
   useEffect(() => {
     loadComments()

@@ -4,9 +4,8 @@ import app from './app.js'
 import envs from './config/envs.js'
 import { initWebSocket } from './utils/websocket.js'
 
-const PORT = envs.PORT || 3001
+const PORT = envs.PORT || 3000
 const server = http.createServer(app)
-
 initWebSocket(server)
 
 AppDataSource.initialize()

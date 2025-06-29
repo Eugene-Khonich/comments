@@ -1,25 +1,45 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 export default function useWebSocket(onMessage) {
+  const socketRef = useRef(null)
+
   useEffect(() => {
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || ''
-    const wsProtocol = baseUrl.startsWith('https') ? 'wss' : 'ws'
-    const wsUrl = baseUrl.replace(/^https?:\/\//, '')
-    const socket = new WebSocket(`${wsProtocol}://${wsUrl}`)
+    const baseHttpUrl =
+      import.meta.env.VITE_API_BASE_URL || window.location.origin
+    const wsProtocol = baseHttpUrl.startsWith('https') ? 'wss' : 'ws'
+    const wsHost = baseHttpUrl.replace(/^https?:\/\//, '')
+    const wsUrl = `${wsProtocol}://${wsHost}`
+
+    console.log('[WebSocket] Підключення до', wsUrl)
+    const socket = new WebSocket(wsUrl)
+    socketRef.current = socket
+
+    socket.onopen = () => {
+      console.log('[WebSocket] Відкрито зʼєднання')
+    }
 
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data)
         onMessage?.(data)
       } catch (e) {
-        console.error('Invalid WebSocket data:', e)
+        console.error('[WebSocket] Помилка розбору повідомлення:', e)
       }
     }
 
-    socket.onerror = (e) => {
-      console.error('WebSocket error:', e)
+    socket.onerror = (event) => {
+      console.error('[WebSocket] Помилка:', event)
     }
 
-    return () => socket.close()
+    socket.onclose = (event) => {
+      console.log(
+        `[WebSocket] Зʼєднання закрите (код: ${event.code}, причина: ${event.reason})`
+      )
+    }
+
+    return () => {
+      console.log('[WebSocket] Закриваємо зʼєднання')
+      socket.close()
+    }
   }, [onMessage])
 }

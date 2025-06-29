@@ -10,35 +10,29 @@ export default function useWebSocket(onMessage) {
     const wsHost = baseHttpUrl.replace(/^https?:\/\//, '')
     const wsUrl = `${wsProtocol}://${wsHost}`
 
-    console.log('[WebSocket] Підключення до', wsUrl)
     const socket = new WebSocket(wsUrl)
     socketRef.current = socket
 
-    socket.onopen = () => {
-      console.log('[WebSocket] Відкрито зʼєднання')
-    }
+    socket.onopen = () => {}
 
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data)
         onMessage?.(data)
       } catch (e) {
-        console.error('[WebSocket] Помилка розбору повідомлення:', e)
+        console.log(e)
       }
     }
 
     socket.onerror = (event) => {
-      console.error('[WebSocket] Помилка:', event)
+      console.log(event)
     }
 
     socket.onclose = (event) => {
-      console.log(
-        `[WebSocket] Зʼєднання закрите (код: ${event.code}, причина: ${event.reason})`
-      )
+      console.log(event)
     }
 
     return () => {
-      console.log('[WebSocket] Закриваємо зʼєднання')
       socket.close()
     }
   }, [onMessage])

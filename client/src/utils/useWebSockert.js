@@ -1,8 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 export default function useWebSocket(onMessage) {
-  const socketRef = useRef(null)
-
   useEffect(() => {
     const baseHttpUrl =
       import.meta.env.VITE_API_BASE_URL || window.location.origin
@@ -11,25 +9,14 @@ export default function useWebSocket(onMessage) {
     const wsUrl = `${wsProtocol}://${wsHost}`
 
     const socket = new WebSocket(wsUrl)
-    socketRef.current = socket
-
-    socket.onopen = () => {}
 
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data)
         onMessage?.(data)
-      } catch (e) {
-        console.log(e)
+      } catch {
+        // Nothing
       }
-    }
-
-    socket.onerror = (event) => {
-      console.log(event)
-    }
-
-    socket.onclose = (event) => {
-      console.log(event)
     }
 
     return () => {
